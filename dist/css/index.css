@@ -1,0 +1,40 @@
+body {
+    background-color: #eee;
+}
+#modal {
+    width: 100%;
+    position: relative;
+    background: url(../images/2zrdI1g.jpg) repeat-y;
+    z-index: 98;
+}
+.modal-contain {
+    position: absolute;
+    z-index: 99;
+    left: 50%;
+    top: 50%;
+    width: 180px;
+    height: 240px;
+    margin-left: -90px;
+    margin-top: -120px;
+}
+#chat {
+    display: none;
+    width: 70%;
+    min-width: 500px;
+    margin: 50px auto;
+}
+#chat .col-md-4,#chat .col-md-8 {
+    height: 500px;
+    overflow: auto;
+}
+#chat .col-md-4 {
+    border-right: 1px solid #eee;
+}
+.chatContent {
+    height: 80%;
+    overflow: auto;
+    margin-bottom: 10px;
+}
+.self {
+    text-align: right;
+}

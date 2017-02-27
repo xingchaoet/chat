@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Chat</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+    <div id="modal">
+        <div class="modal-contain">
+            <p><input type="text" placeHolder="请输入名字" id="nickName" /></p>
+            <p><button id="sendNickName" type="button" class="btn btn-defult">提交</button></p>
+        </div>
+    </div>
+    <div id="chat" class="container">
+        <div class="row">
+          <div class="col-md-4 chat-member">
+              <a class="socketId" href="javascript:;"><img src="images/tx.jpg" height="64" width="64" alt="" class="img-thumbnail" /><span>chatName</span><br /></a>
+          </div>
+          <div class="col-md-8">
+              
+              <!--消息显示-->
+              <div class="chatContent">
+                  <!-- <p class="other">123:<span>消息1</span></p> -->
+                  <!-- <p class="self"><span>消息2</span>:123</p> -->
+              </div>
+
+
+              <!--发送消息框-->
+              <div class="row">
+                  <div class="col-lg-12">
+                    <div class="input-group input-group-lg">
+                      <input id="Msg" type="text" class="form-control Msg">
+                      <span class="input-group-btn">
+                        <button id="sendMsg" class="btn btn-default" type="button">发送</button>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-default">语音</button>
+                <button id="videoControl" class="btn btn-default">视频</button>
+          </div>
+        </div>
+    </div>
+    <video id="video" autoplay></video>
+</body>
+<script src="js/jquery-1.11.3.js"></script>
+<!--  完全不知道他是怎么找到的-->
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    var modal=document.getElementById("modal");
+    var chat=document.getElementById("chat");
+    var socket;
+    var video=document.getElementById("video");
+    var sendMsg=document.getElementById("sendMsg");
+    var Msg=document.getElementsByClassName("Msg")[0];
+    var chatContent=document.getElementsByClassName("chatContent")[0];
+    var name="";
+     var localStream,remoteStream,peerconnection;
+    var RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    var videoC=document.getElementById("videoControl");
+    var initiator;//发送者ID
+    var id;//接受者的ID
+    modal.style.height=window.screen.availHeight+"px";
+
+
+
+
+//侧边单选栏
+    var tempRadio=null;
+    function checkradio(radio) {
+      var inputradio=document.getElementsByClassName("socketId");
+      for(i of inputradio){
+        if(i==radio) continue;
+        i.checked=false;
+      }
+      if(tempRadio==radio){
+        radio.checked=false;
+        tempRadio=null;
+      }else{
+        tempRadio=radio;
+      }
+    }
+
+
+
+    //bug  如果不登陆 其实也会也有信息接受
+    //--------------------验证登陆
+    document.getElementById("sendNickName").onclick=function(){
+        name=document.getElementById("nickName").value
+        socket=io();
+        socket.emit("login",name);
+    
+
+
+    //-------------------------登录成功
+    socket.on("login",function(){
+      modal.style.display="none";
+      chat.style.display="block";
+    });
+
+
+    //----------------------------用户登进登出
+    socket.on("system",function(data,socketid){//后面data要变成对象，因为要添加头像     
+      var loginStr="";
+      var arr=data;
+      for (var k in arr){
+        loginStr+='<input type="radio" onclick="checkradio(this)" class="socketId" socketId="'+socketid[k]+'"><img src="images/tx.jpg" height="64" width="64" alt="" class="img-thumbnail" /><span>'+data[k]+'</span><br /></a>'
+      }
+      document.getElementsByClassName("chat-member")[0].innerHTML=loginStr;
+      if(arr.length==0){location.reload();}
+    });
+
+    //--------------------名字已经存在
+    socket.on("system-nickname",function(){
+      alert("名字已经存在");
+    });
+
+
+    //------------------------发送消息  
+    sendMsg.onclick=function(){
+      if(Msg.value===""){alert("消息不能为空");return;}
+      socket.emit("sendMsg",Msg.value);
+      var p=document.createElement("p");
+      p.className="self";
+      Msg.value=safeHtml(Msg.value);
+      p.innerHTML="<span>"+Msg.value+"</span>:"+name;
+      chatContent.appendChild(p);
+      Msg.value="";
+      chatContent.scrollTop=chatContent.scrollHeight;
+    }
+
+
+    socket.on("Msg",function(data,nickname){
+      var p=document.createElement("p");
+      p.className="other";
+      p.innerHTML=nickname+":<span>"+data+"</span>"
+      chatContent.appendChild(p);
+      chatContent.scrollTop=chatContent.scrollHeight;
+    });
+
+
+
+    //--------------------两个回车事件提高用户体验
+    document.onkeydown=function(e){
+      e=e||event;
+      if(document.activeElement.id=="nickName"&&e.keyCode==13){
+        document.getElementById("sendNickName").click();
+      }
+      if(document.activeElement.id=="Msg"&&e.keyCode==13){
+        sendMsg.click();
+      }
+    }
+    function safeHtml(html){
+        html= html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        return html;
+    }
+  }
+</script>
+<script src="js/media.js"></script>
+</html>
