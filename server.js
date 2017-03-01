@@ -102,6 +102,9 @@ io.on("connection",function(socket){
 
     socket.on("media",function(){
         socket.broadcast.emit("contact")
+    });
+    socket.on("audio",function(left,right){
+        socket.broadcast.emit("audio",left,right);
     })
 });
 //定义一个控制消息的函数

@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8;audio/mpeg;audio/audio/x-wav">
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Chat</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
@@ -26,8 +26,6 @@
                   <!-- <p class="other">123:<span>消息1</span></p> -->
                   <!-- <p class="self"><span>消息2</span>:123</p> -->
               </div>
-
-
               <!--发送消息框-->
               <div class="row">
                   <div class="col-lg-12">
@@ -39,12 +37,16 @@
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-default">语音</button>
+                <button id="audioControl"  class="btn btn-default">语音</button>
+                <button id="audiodisconnect"  class="btn btn-default">录音结束</button>
                 <button id="videoControl" class="btn btn-default">视频</button>
           </div>
         </div>
     </div>
-    <video id="video" autoplay></video>
+    <div id="videoContain">
+      <video id="video" autoplay></video>
+      <button id="disconnect" class="btn btn-default">关闭视频</button>
+    </div>
 </body>
 <script src="js/jquery-1.11.3.js"></script>
 <!--  完全不知道他是怎么找到的-->

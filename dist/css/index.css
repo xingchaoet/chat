@@ -38,3 +38,14 @@ body {
 .self {
     text-align: right;
 }
+.self,.other {
+    height: 30px;
+}
+#videoContain {
+    position: absolute;
+    top:0;
+    display: none;
+}
+#audiodisconnect {
+    display: none;
+}
